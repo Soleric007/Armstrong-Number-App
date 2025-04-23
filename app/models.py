@@ -39,11 +39,20 @@ class Attempt(db.Model):
     result = db.Column(db.String(255))
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-
 class Feedback(db.Model):
     __tablename__ = 'feedbacks'
 
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)  # Add name
+    email = db.Column(db.String(120), nullable=False)  # Add email
     message = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Corrected foreign key reference to users
+
+    user = db.relationship('User', backref='feedbacks', lazy=True)
+
+    def __init__(self, name, email, message, user_id):
+        self.name = name
+        self.email = email
+        self.message = message
+        self.user_id = user_id
